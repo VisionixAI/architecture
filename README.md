@@ -1,7 +1,5 @@
 # VisionixAI
 
-![Build Status](https://img.shields.io/github/actions/workflow/status/yourusername/visionixai/ci.yml?branch=main)
-![License](https://img.shields.io/github/license/yourusername/visionixai)
 
 **Zone-Based Computer Vision Automation**  
 Smart actions through visual presence detection—no external sensors or hardware dependencies required.
