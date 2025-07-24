@@ -1,25 +1,41 @@
-# VisionixAI – Architecture
+# VisionixAI
 
-**Zone-Based Computer Vision Automation**
-Smart actions through visual presence detection.
+![Build Status](https://img.shields.io/github/actions/workflow/status/yourusername/visionixai/ci.yml?branch=main)
+![License](https://img.shields.io/github/license/yourusername/visionixai)
 
-VisionixAI is a computer vision platform for detecting presence in room zones and triggering automated responses—no sensors or hardware dependencies required.
+**Zone-Based Computer Vision Automation**  
+Smart actions through visual presence detection—no external sensors or hardware dependencies required.
 
-This repository contains the complete system architecture for VisionixAI.
-It includes component hierarchies, data flows, and design logic—enabling scalable, real‑world vision automation using minimal hardware and clean software abstractions.
+VisionixAI is a modular computer vision platform that detects human presence within predefined spatial zones and orchestrates automated responses. By leveraging high-performance visual processing, VisionixAI delivers seamless, scalable automation for smart environments—from homes to enterprise settings.
 
+## Table of Contents
+
+- [System Overview](#system-overview)
+- [Architecture Diagram](#architecture-diagram)
+- [Components](#components)
+- [Technologies](#technologies)
+- [Status](#status)
+- [License](#license)
+
+---
 
 ## System Overview
 
-Any physical space is divided into virtual grid zones. When a zone remains unoccupied for a few seconds, the system emits signals to power off devices. When a person re‑enters the zone, automation is reversed. All interactions rely solely on visual input.
+Any physical space is divided into virtual grid zones. When a zone remains unoccupied for a configurable duration, VisionixAI emits control signals to power off connected devices. Upon detecting a person re-entering the zone, the system reverses the automation. All interactions rely solely on visual input.
 
-The system is modular—components include a CLI, vision engine, signal dispatcher, and pluggable integration layers.
+Key features:
 
+- **Zone Partitioning**: Virtual grid overlay on frames.
+- **Presence Detection**: Combines object detection (YOLOv8) and tracking (MediaPipe).
+- **Noise Reduction**: Temporal smoothing to prevent false triggers.
+- **Extensible Output**: MQTT, GPIO, WebSockets, or cloud relays.
+
+---
 
 ## Architecture Diagram
 
 ```mermaid
-graph TD
+flowchart TD
   subgraph EntryPoint
     A1[CLI Tool]
   end
@@ -37,7 +53,7 @@ graph TD
   subgraph Detection_Engine
     D1[YOLOv8 Detector]
     D2[MediaPipe Tracker]
-    D3[Frame‑wise Inference]
+    D3[Frame-wise Inference]
   end
 
   subgraph Postprocessing
@@ -98,64 +114,71 @@ graph TD
 
   E2 --> H1
   H1 --> H2
-```
+```  
 
+---
 
 ## Components
 
-* **CLI Tool**
-  Serves as the entry point. Accepts live camera or video input and handles runtime arguments.
+### 1. CLI Tool
+- Entry point for live camera or video input.
+- Built with [Typer](https://typer.tiangolo.com) and [Rich](https://rich.readthedocs.io/) for UX.
 
-* **Camera Stream / Video Input**
-  Supports real‑time webcam input or static footage playback.
+### 2. Input Handlers
+- **Camera Stream Handler**: Captures real-time webcam feed.
+- **Static Video Loader**: Processes pre-recorded footage.
 
-* **Frame Preprocessing**
-  Normalizes and resizes input frames, then applies a virtual grid overlay for zone partitioning.
+### 3. Frame Preprocessing
+- **Frame Normalizer**: Resizes and standardizes frames.
+- **Zone Grid Mapper**: Overlays a configurable grid for zone partitioning.
 
-* **Detection Engine**
-  Uses YOLOv8 for object detection and MediaPipe for tracking. Combines both to infer human presence per zone.
+### 4. Detection Engine
+- **YOLOv8 Detector**: High-performance object detection.
+- **MediaPipe Tracker**: Robust human tracking across frames.
+- Integrated inference pipeline for per-zone presence detection.
 
-* **Postprocessing**
-  Adds temporal smoothing to reduce noise. Triggers actions only after stable zone transitions.
+### 5. Postprocessing
+- **Zone Occupancy Logic**: Determines zone transitions.
+- **Temporal Smoothing**: Aggregates results to reduce noise.
 
-* **Signal Dispatcher**
-  Emits control signals via MQTT or GPIO pins. Can be extended to support WebSockets or cloud relays.
+### 6. Signal Dispatcher
+- Emits automation signals via:
+  - MQTT brokers
+  - GPIO pins / Relay modules
+  - Extendable for WebSockets or cloud relays
 
-* **API Layer (Planned)**
-  FastAPI interface for integration with dashboards, applications, or external triggers.
+### 7. (Optional) API Layer
+- Planned [FastAPI](https://fastapi.tiangolo.com/) interface for external integration and dashboards.
 
-* **Data Storage**
-  Optional state saving for debugging, offline logging, or visual replay (using SQLite or JSON).
+### 8. Data Storage
+- **Local State**: In-memory state persistence.
+- **Storage Backend**: SQLite or JSON for logging and replay.
 
-* **DevOps & Tooling**
+### 9. DevOps & Tooling
+- **CI/CD**: GitHub Actions workflows.
+- **Logging**: Structured logs for debugging.
 
-  * Typer for CLI
-  * Rich for terminal UI
-  * Custom logging module
+---
 
+## Technologies
 
+- **Language**: Python 3.11+
+- **Computer Vision**: OpenCV, YOLOv8 (Ultralytics), MediaPipe
+- **CLI & UX**: Typer, Rich
+- **API**: FastAPI (planned)
+- **Signaling**: MQTT, GPIO
 
-## Technologies Used
-
-* Python 3.11+
-* OpenCV
-* YOLOv8 (Ultralytics)
-* MediaPipe
-* Typer
-* Rich
-* FastAPI (planned)
-* MQTT / GPIO (for hardware signaling)
-
+---
 
 ## Status
 
-* CLI pipeline: functional and modular
-* Vision engine (YOLO + MediaPipe): working in sync
-* MQTT-based signal dispatch: tested
-* API interface and dashboard: pending
+- **CLI Pipeline**: Functional and modular.
+- **Detection Engine**: YOLOv8 + MediaPipe integrated and tested.
+- **Signal Dispatch**: MQTT signaling verified.
+- **API & Dashboard**: In development.
 
-
+---
 
 ## License
 
-This project is licensed under the MIT License. See `LICENSE` for details.
+This project is licensed under the [MIT License](LICENSE).
